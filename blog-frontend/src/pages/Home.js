@@ -1,24 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { getPosts, deletePost, togglePostLike } from '../services/api';
+import { getPosts, togglePostLike } from '../services/api';
 import './Home.css';
 
 const Home = ({ user }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showOnlyMyPosts, setShowOnlyMyPosts] = useState(false);
-
+  
   const fetchPosts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const response = await getPosts(user?.token);
       setPosts(response.data || []);
     } catch (err) {
-      setError('Failed to fetch posts.');
+      console.error('Failed to fetch posts.');
     } finally {
       setLoading(false);
     }
@@ -28,118 +22,96 @@ const Home = ({ user }) => {
     fetchPosts();
   }, [fetchPosts]);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this post?')) return;
-    try {
-      await deletePost(id, user?.token);
-      setPosts(posts.filter((post) => post.id !== id));
-      setMessage('Post deleted successfully.');
-    } catch (err) {
-      setError('Failed to delete post.');
-    }
-  };
-
   const handleToggleLike = async (post) => {
     try {
       await togglePostLike(post.id, user?.token);
-      fetchPosts();
+      setPosts(posts.map(p => 
+        p.id === post.id 
+          ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 } 
+          : p
+      ));
     } catch (err) {
-      setError('Unable to update like status.');
+      console.error('Unable to update like status.');
     }
   };
 
-  const calculateReadingTime = (text) => {
-    const wordsPerMinute = 200;
-    const words = text ? text.split(/\s+/).length : 0;
-    const minutes = Math.ceil(words / wordsPerMinute);
-    return minutes;
-  };
-
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch = 
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesUser = showOnlyMyPosts ? (post.userId === user?.id || post.author === user?.username) : true;
-    
-    return matchesSearch && matchesUser;
-  });
-
-  const canDelete = (post) => {
-    return (
-      post.userId === user?.id ||
-      post.authorId === user?.id ||
-      post.author === user?.username
-    );
-  };
-
-  if (loading) return <div className="loading">Loading posts...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (loading) return <div className="loading">Checking for updates...</div>;
 
   return (
-    <div className="home">
-      <div className="home-header">
-        <h1>Latest Posts</h1>
-        <Link to="/create" className="create-link">
-          Create New Post
-        </Link>
-      </div>
+    <div className="feed-container">
+      <div className="posts-feed">
+        {posts.map((post) => (
+          <article key={post.id} className="feed-post">
+            <header className="post-header">
+              <Link to={`/${post.author}`} className="author-info">
+                 <div className="author-avatar">
+                   {post.userProfilePic ? (
+                     <img src={`http://localhost:8080${post.userProfilePic}`} alt={post.author} />
+                   ) : (
+                     <div className="avatar-placeholder">{post.author[0].toUpperCase()}</div>
+                   )}
+                 </div>
+                 <span className="author-username">{post.author}</span>
+              </Link>
+              <button className="more-options">•••</button>
+            </header>
 
-      <div className="home-controls">
-        <div className="search-box">
-          <input 
-            type="text" 
-            placeholder="Search posts..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="filter-box">
-          <label>
-            <input 
-              type="checkbox" 
-              checked={showOnlyMyPosts}
-              onChange={(e) => setShowOnlyMyPosts(e.target.checked)}
-            />
-            My Posts Only
-          </label>
-        </div>
-      </div>
-
-      {message && <div className="success-message">{message}</div>}
-
-      <div className="posts-list">
-        {filteredPosts.length === 0 ? (
-          <div className="empty-state">No posts found.</div>
-        ) : (
-          filteredPosts.map((post) => (
-            <div key={post.id} className="post-item">
-              <div className="post-top">
-                <div>
-                  <div className="post-meta-top">
-                    <span className="post-category">{post.category || 'General'}</span>
-                    <span className="post-reading-time">{calculateReadingTime(post.content)} min read</span>
-                  </div>
-                  <h2>{post.title}</h2>
-                  <p className="post-author">By {post.author || post.username || 'Unknown'}</p>
+            <div className="post-image">
+              {post.imageUrl ? (
+                <img src={`http://localhost:8080${post.imageUrl}`} alt={post.title} />
+              ) : (
+                <div className="no-image-placeholder">
+                  <h3>{post.title}</h3>
                 </div>
-                <button
-                  className={`like-button ${post.liked ? 'liked' : ''}`}
+              )}
+            </div>
+
+            <div className="post-actions">
+              <div className="action-buttons">
+                <button 
+                  className={`action-btn like ${post.liked ? 'active' : ''}`}
                   onClick={() => handleToggleLike(post)}
                 >
-                  {post.liked ? '♥' : '♡'} {post.likes || 0}
+                  {post.liked ? '❤️' : '♡'}
                 </button>
+                <Link to={`/post/${post.id}`} className="action-btn">💬</Link>
+                <button className="action-btn">✈️</button>
               </div>
-              <p>{(post.content || '').substring(0, 140)}...</p>
-              <div className="post-actions">
-                <Link to={`/post/${post.id}`}>View Details</Link>
-                {canDelete(post) && (
-                  <button onClick={() => handleDelete(post.id)} className="delete-btn">Delete</button>
-                )}
-              </div>
+              <button className="action-btn bookmark">🔖</button>
             </div>
-          ))
-        )}
+
+            <section className="post-details">
+              <div className="likes-count"><strong>{post.likes}</strong> likes</div>
+              <div className="post-caption">
+                <strong>{post.author}</strong> {post.title} - {post.content}
+              </div>
+              <div className="view-comments">View all comments</div>
+              <div className="post-time">{new Date(post.createdAt).toLocaleDateString()}</div>
+            </section>
+          </article>
+        ))}
+      </div>
+      
+      <div className="suggestions-sidebar">
+        <div className="current-user">
+           <div className="avatar"> {user?.username[0].toUpperCase()} </div>
+           <div className="info">
+             <strong>{user?.username}</strong>
+             <span>Welcome back!</span>
+           </div>
+        </div>
+        <div className="suggestions-header">
+           <span>Suggestions For You</span>
+           <strong>See All</strong>
+        </div>
+        <div className="suggestion-item">
+           <div className="avatar">A</div>
+           <div className="info">
+             <strong>antigravity_ai</strong>
+             <span>Suggested for you</span>
+           </div>
+           <button className="follow-btn">Follow</button>
+        </div>
       </div>
     </div>
   );

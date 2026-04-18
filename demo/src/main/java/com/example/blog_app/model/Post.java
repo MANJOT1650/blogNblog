@@ -1,10 +1,16 @@
 package com.example.blog_app.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="posts")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
 
     @Id
@@ -18,8 +24,11 @@ public class Post {
 
     private String category;
 
-    @Column(name = "user_id")
-    private Long userId;
+    private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -28,24 +37,4 @@ public class Post {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-
-    public Post() {}
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
 }

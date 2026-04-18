@@ -1,9 +1,15 @@
 package com.example.blog_app.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "likes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Like {
 
     @Id
@@ -18,18 +24,4 @@ public class Like {
 
     @Column(name = "comment_id")
     private Long commentId;
-
-    public Like() {}
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public Long getPostId() { return postId; }
-    public void setPostId(Long postId) { this.postId = postId; }
-
-    public Long getCommentId() { return commentId; }
-    public void setCommentId(Long commentId) { this.commentId = commentId; }
 }

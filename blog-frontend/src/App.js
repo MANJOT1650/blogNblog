@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import CreatePost from './pages/CreatePost';
 import PostDetails from './pages/PostDetails';
+import Chat from './pages/Chat';
+import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import './App.css';
@@ -29,17 +31,21 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
-
   useEffect(() => {
     if (user) {
       localStorage.setItem('blogUser', JSON.stringify(user));
+      localStorage.setItem('token', user.token || user.accessToken);
+      localStorage.setItem('username', user.username);
     } else {
       localStorage.removeItem('blogUser');
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
     }
   }, [user]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   const handleLogout = () => {
     setUser(null);
@@ -49,7 +55,7 @@ function App() {
     <Router>
       <div className="App">
         <Navbar user={user} onLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
-        <main>
+        <main className="main-content">
           <Routes>
             <Route
               path="/login"
@@ -68,6 +74,14 @@ function App() {
               }
             />
             <Route
+              path="/direct/inbox"
+              element={
+                <RequireAuth user={user}>
+                  <Chat user={user} />
+                </RequireAuth>
+              }
+            />
+            <Route
               path="/create"
               element={
                 <RequireAuth user={user}>
@@ -80,6 +94,14 @@ function App() {
               element={
                 <RequireAuth user={user}>
                   <PostDetails user={user} />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/:username"
+              element={
+                <RequireAuth user={user}>
+                  <Profile user={user} />
                 </RequireAuth>
               }
             />
