@@ -1,0 +1,43 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+  min-height: 100vh;
+  color: #1f2937;
+}
+
+main {
+  min-height: 540px;
+  padding: 20px 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+}
+
+footer {
+  text-align: center;
+  padding: 18px 10px;
+  margin-top: 40px;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .App {
+    padding: 16px;
+  }
+}
+
