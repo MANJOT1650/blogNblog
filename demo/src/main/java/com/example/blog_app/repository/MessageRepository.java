@@ -1,7 +1,6 @@
 package com.example.blog_app.repository;
 
 import com.example.blog_app.model.Message;
-import com.example.blog_app.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
