@@ -13,7 +13,7 @@ const Navbar = ({ user, onLogout, theme, toggleTheme }) => {
   return (
     <nav className="insta-nav">
       <div className="nav-content">
-        <Link to="/" className="logo">InstaBlog</Link>
+        <Link to="/" className="logo">blogNblog</Link>
         
         {user && (
           <div className="nav-search">

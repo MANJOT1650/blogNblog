@@ -1,0 +1,230 @@
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    border-right: 1px solid var(--border-dim);
+    background: var(--bg-card);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000; /* Sidebar always on top */
+}
+
+.sidebar-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+}
+
+.sidebar-logo {
+    padding: 0 12px 32px;
+}
+
+.sidebar-logo a {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-main);
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--text-main);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+
+.nav-item:hover {
+    background: var(--bg-hover);
+}
+
+.nav-item.active {
+    font-weight: 700;
+}
+
+.nav-item span {
+    font-size: 16px;
+}
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-dim);
+}
+
+/* Search Backdrop */
+.search-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Search Panel Styling */
+.search-panel {
+    position: fixed;
+    left: -400px; /* Hidden start */
+    top: 0;
+    width: 400px;
+    height: 100vh;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-dim);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+    z-index: 950; /* Above backdrop, but same/lower than sidebar? Actually, let's overlap sidebar if open */
+    padding: 24px;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    visibility: hidden; /* Prevent interaction when hidden */
+}
+
+.search-panel.open {
+    left: 240px; /* Appears to the right of Sidebar */
+    visibility: visible;
+}
+
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.search-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.close-search {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.search-input-wrapper {
+    margin-bottom: 24px;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 16px;
+    outline: none;
+}
+
+.search-input-wrapper input:focus {
+    border-color: var(--accent);
+}
+
+.search-results {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-main);
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.search-result-item:hover {
+    background: var(--bg-hover);
+}
+
+.result-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.result-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.result-username {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.result-bio {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+
+.no-results {
+    text-align: center;
+    color: var(--text-muted);
+    padding-top: 40px;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .search-panel {
+        width: calc(100% - 72px);
+        left: -100%;
+    }
+    .search-panel.open {
+        left: 72px;
+    }
+}

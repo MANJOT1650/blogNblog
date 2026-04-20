@@ -26,6 +26,11 @@ const Register = ({ setUser }) => {
     try {
       const response = await registerUser({ email, username, password });
       const userData = normalizeAuthResult(response.data);
+      localStorage.setItem('blogUser', JSON.stringify(userData));
+      localStorage.setItem('token', userData.token);
+      if (userData.username) {
+          localStorage.setItem('username', userData.username);
+      }
       setUser(userData);
       navigate('/');
     } catch (err) {

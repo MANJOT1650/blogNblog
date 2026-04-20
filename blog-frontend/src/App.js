@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
 import CreatePost from './pages/CreatePost';
 import PostDetails from './pages/PostDetails';
@@ -8,6 +8,7 @@ import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Settings from './pages/Settings';
 import './App.css';
 
 const storedUser = () => {
@@ -24,24 +25,12 @@ const RequireAuth = ({ user, children }) => {
 
 function App() {
   const [user, setUser] = useState(storedUser());
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
-
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('blogUser', JSON.stringify(user));
-      localStorage.setItem('token', user.token || user.accessToken);
-      localStorage.setItem('username', user.username);
-    } else {
-      localStorage.removeItem('blogUser');
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
-    }
-  }, [user]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -49,13 +38,31 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem('blogUser');
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
   };
 
   return (
     <Router>
-      <div className="App">
-        <Navbar user={user} onLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
-        <main className="main-content">
+      <div className="app-layout">
+        {user ? (
+          <Sidebar user={user} onLogout={handleLogout} theme={theme} toggleTheme={toggleTheme} />
+        ) : (
+          <nav className="top-navbar">
+            <div className="nav-logo">
+              <Link to="/">blogNblog</Link>
+            </div>
+            <div className="nav-links">
+              <button className="theme-toggle-btn" onClick={toggleTheme}>
+                {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+              </button>
+              <Link to="/login" className="nav-link">Login</Link>
+              <Link to="/register" className="nav-link">Register</Link>
+            </div>
+          </nav>
+        )}
+        <main className={`main-content ${!user ? 'no-sidebar' : ''}`}>
           <Routes>
             <Route
               path="/login"
@@ -86,6 +93,14 @@ function App() {
               element={
                 <RequireAuth user={user}>
                   <CreatePost user={user} />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <RequireAuth user={user}>
+                  <Settings user={user} setUser={setUser} />
                 </RequireAuth>
               }
             />

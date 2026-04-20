@@ -43,6 +43,7 @@ public class PostController {
     @GetMapping
     public List<Map<String, Object>> getAll(
             @RequestParam(value = "filter", required = false) String filter,
+            @RequestParam(value = "username", required = false) String profileUsername,
             Authentication auth) {
         
         String username = (auth != null) ? auth.getName() : null;
@@ -57,6 +58,8 @@ public class PostController {
             posts = postRepo.findAll().stream()
                     .filter(p -> following.contains(p.getUser()))
                     .collect(Collectors.toList());
+        } else if (profileUsername != null && !profileUsername.isEmpty()) {
+            posts = postRepo.findByUserUsernameOrderByCreatedAtDesc(profileUsername);
         } else {
             posts = postRepo.findAll();
         }

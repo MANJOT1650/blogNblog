@@ -24,10 +24,11 @@ public class MessageService {
         User receiver = userRepository.findByUsername(receiverUsername).orElseThrow();
 
         Message message = new Message();
-        message.setSender(sender);
-        message.setReceiver(receiver);
+        message.setSenderId(sender.getId());
+        message.setReceiverId(receiver.getId());
         message.setContent(content);
-        message.setTimestamp(LocalDateTime.now());
+        // Note: createdAt typically is set by @PrePersist on Message, but we can set it explicitly too
+        message.setCreatedAt(LocalDateTime.now());
         message.setStatus(MessageStatus.SENT);
 
         return messageRepository.save(message);
@@ -36,8 +37,14 @@ public class MessageService {
     public List<Message> getChatHistory(String username1, String username2) {
         User user1 = userRepository.findByUsername(username1).orElseThrow();
         User user2 = userRepository.findByUsername(username2).orElseThrow();
-        return messageRepository.findBySenderAndReceiverOrSenderAndReceiverOrderByTimestampAsc(
-            user1, user2, user2, user1
+        return messageRepository.findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByCreatedAtAsc(
+            user1.getId(), user2.getId(), user2.getId(), user1.getId()
         );
+    }
+
+    public void updateMessageStatus(Long messageId, MessageStatus status) {
+        Message message = messageRepository.findById(messageId).orElseThrow();
+        message.setStatus(status);
+        messageRepository.save(message);
     }
 }

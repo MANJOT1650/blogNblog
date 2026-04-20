@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Heart, Trash2, Clock, Hash } from 'lucide-react';
 import { getPosts, getComments, addComment, deletePost, togglePostLike, toggleCommentLike } from '../services/api';
 import './PostDetails.css';
 
@@ -64,27 +65,29 @@ const PostDetails = ({ user }) => {
   };
 
   const handleToggleLike = async () => {
-    console.log('Toggling like for post:', id, 'User token:', user?.token);
     try {
-      const response = await togglePostLike(id, user?.token);
-      console.log('Like response:', response);
-      fetchPostAndComments();
+      await togglePostLike(id, user?.token);
+      // Optimistic update
+      setPost(prev => ({
+          ...prev, 
+          liked: !prev.liked, 
+          likes: prev.liked ? prev.likes - 1 : prev.likes + 1
+      }));
     } catch (err) {
       console.error('Like error:', err);
-      setError('Unable to toggle like.');
+      // Rollback or refetch
+      fetchPostAndComments();
     }
   };
 
   const handleToggleCommentLike = async (commentId) => {
-    console.log('Toggling like for comment:', commentId, 'User token:', user?.token);
     try {
-      const response = await toggleCommentLike(commentId, user?.token);
-      console.log('Comment like response:', response);
+      await toggleCommentLike(commentId, user?.token);
+      // Refresh comments
       const commentsResponse = await getComments(id, user?.token);
       setComments(commentsResponse.data || []);
     } catch (err) {
       console.error('Comment like error:', err);
-      setError('Unable to toggle comment like.');
     }
   };
 
@@ -107,65 +110,69 @@ const PostDetails = ({ user }) => {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="post-details">
+    <div className="post-details-container">
       <div className="post-header">
-        <div>
+        <div className="header-info">
           <div className="post-meta-top">
-            <span className="post-category">{post.category || 'General'}</span>
-            <span className="post-reading-time">{calculateReadingTime(post.content)} min read</span>
+            <span className="post-category"><Hash size={14} /> {post.category || 'General'}</span>
+            <span className="post-reading-time"><Clock size={14} /> {calculateReadingTime(post.content)} min read</span>
           </div>
           <h1>{post.title}</h1>
-          <p className="post-meta">By {post.author || post.username || 'Unknown'}</p>
+          <p className="post-meta">By <strong>{post.author || 'Unknown'}</strong></p>
         </div>
         <div className="post-actions-row">
-          <button className={`like-button ${post.liked ? 'liked' : ''}`} onClick={handleToggleLike}>
-            {post.liked ? '♥' : '♡'} {post.likes || 0}
+          <button type="button" className={`like-button ${post.liked ? 'liked' : ''}`} onClick={(e) => { e.preventDefault(); handleToggleLike(); }}>
+            <Heart size={20} fill={post.liked ? "currentColor" : "none"} /> <span>{post.likes || 0}</span>
           </button>
           {canDelete() && (
             <button className="danger-button" onClick={handleDelete}>
-              Delete Post
+              <Trash2 size={20} />
             </button>
           )}
         </div>
       </div>
 
-      <p className="post-content">{post.content}</p>
-
-      {message && <div className="success-message">{message}</div>}
+      <div className="post-content">
+        {post.imageUrl && <img src={`http://localhost:8080${post.imageUrl}`} alt={post.title} className="main-image" />}
+        <p>{post.content}</p>
+      </div>
 
       <section className="comments-section">
-        <h2>Comments</h2>
+        <h2>Comments ({comments.length})</h2>
+        <form onSubmit={handleAddComment} className="comment-form">
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Add your thoughts..."
+              required
+            />
+            <button type="submit" disabled={!commentText.trim()}>Post Comment</button>
+        </form>
+
         {comments.length === 0 ? (
-          <div className="empty-state">No comments yet.</div>
+          <div className="empty-state">No comments yet. Be the first to share your thoughts!</div>
         ) : (
           <div className="comments-list">
             {comments.map((comment) => (
-              <div key={comment.id} className="comment">
-                <p>{comment.text || comment.body || ''}</p>
-                <div className="comment-footer">
-                  <p className="comment-author">{comment.username || comment.author || 'Anonymous'}</p>
-                  <button
-                    className={`comment-like-button ${comment.liked ? 'liked' : ''}`}
-                    onClick={() => handleToggleCommentLike(comment.id)}
-                  >
-                    {comment.liked ? '♥' : '♡'} {comment.likes || 0}
-                  </button>
+              <div key={comment.id} className="comment-item">
+                <div className="comment-body">
+                  <p className="comment-text">{comment.text || comment.body || ''}</p>
+                  <div className="comment-footer">
+                    <span className="comment-author">@{comment.username || 'anonymous'}</span>
+                    <button
+                      type="button"
+                      className={`comment-like-btn ${comment.liked ? 'liked' : ''}`}
+                      onClick={(e) => { e.preventDefault(); handleToggleCommentLike(comment.id); }}
+                    >
+                      <Heart size={14} fill={comment.liked ? "currentColor" : "none"} /> {comment.likes || 0}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </section>
-
-      <form onSubmit={handleAddComment} className="comment-form">
-        <textarea
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          placeholder="Write a comment"
-          required
-        />
-        <button type="submit">Add Comment</button>
-      </form>
     </div>
   );
 };

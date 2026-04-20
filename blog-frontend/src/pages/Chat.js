@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { connect, sendMessage, disconnect } from '../services/socketService';
+import { Search, Send, MessageCircle, User } from 'lucide-react';
 import axios from 'axios';
 import './Chat.css';
 
@@ -61,6 +62,16 @@ const Chat = () => {
     const handleSend = () => {
         if (input.trim() && receiver) {
             sendMessage(receiver, input);
+            
+            // Optimistic Update: Show the message immediately
+            const optimisticMsg = {
+                content: input,
+                sender: { username: currentUsername },
+                receiver: { username: receiver },
+                timestamp: new Date().toISOString()
+            };
+            setMessages((prev) => [...prev, optimisticMsg]);
+            
             setInput('');
         }
     };
@@ -76,6 +87,7 @@ const Chat = () => {
                     <h3>{currentUsername}</h3>
                 </div>
                 <div className="user-search">
+                    <Search className="search-icon" size={18} />
                     <input 
                         type="text" 
                         placeholder="Search user..." 
@@ -96,7 +108,7 @@ const Chat = () => {
                                 {u.profilePicture ? (
                                     <img src={`http://localhost:8080${u.profilePicture}`} alt={u.username} />
                                 ) : (
-                                    u.username[0].toUpperCase()
+                                    <User size={16} />
                                 )}
                             </div>
                             <span>{u.username}</span>
@@ -104,7 +116,7 @@ const Chat = () => {
                     ))}
                     {searchUser && !following.find(f => f.username === searchUser) && (
                         <div className="chat-item" onClick={() => handleSelectUser(searchUser)}>
-                             <div className="avatar small">?</div>
+                             <div className="avatar small"><User size={16} /></div>
                              <span>{searchUser} (Search)</span>
                         </div>
                     )}
@@ -115,7 +127,7 @@ const Chat = () => {
                     <>
                         <div className="chat-header">
                             <div className="user-info">
-                                <div className="avatar"> {receiver[0].toUpperCase()} </div>
+                                <div className="avatar"> <User size={20} /> </div>
                                 <h2>{receiver}</h2>
                             </div>
                         </div>
@@ -138,13 +150,13 @@ const Chat = () => {
                                 placeholder="Type a message..."
                             />
                             <button onClick={handleSend} className={input ? 'active' : ''}>
-                                <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                                <Send size={24} />
                             </button>
                         </div>
                     </>
                 ) : (
                     <div className="no-chat-selected">
-                        <div className="icon">💬</div>
+                        <MessageCircle size={48} className="placeholder-icon" />
                         <h2>Your Messages</h2>
                         <p>Send private photos and messages to a friend.</p>
                         <button onClick={() => setFollowing([...following])}>Select a User</button>

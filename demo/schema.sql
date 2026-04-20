@@ -1,4 +1,4 @@
--- MySQL Schema for InstaBlog Platform
+-- MySQL Schema for blogNblog Platform
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

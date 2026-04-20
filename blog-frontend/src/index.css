@@ -1,50 +1,87 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Light Theme */
-  --bg-app: #ffffff;
-  --bg-card: #ffffff;
-  --bg-input: #fafafa;
-  --text-main: #262626;
-  --text-muted: #8e8e8e;
-  --text-link: #0095f6;
-  --border-dim: #dbdbdb;
-  --border-focus: #a8a8a8;
-  --nav-bg: rgba(255, 255, 255, 0.8);
-  --accent: #ed4956;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  /* Vibrant Light Theme */
+  --bg-app: 
+    radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.8) 0%, transparent 8%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.8) 0%, transparent 8%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 20% 0%, rgba(186, 230, 253, 0.7) 0%, transparent 40%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 80% 10%, rgba(125, 211, 252, 0.5) 0%, transparent 50%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 10% 90%, rgba(254, 205, 211, 0.6) 0%, transparent 40%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 90% 100%, rgba(253, 164, 175, 0.7) 0%, transparent 50%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle, rgba(0, 0, 0, 0.03) 1.5px, transparent 1.5px) 0 0 / 25px 25px repeat,
+    linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 40%, #ffe4e6 80%, #ffedd5 100%) 0 0 / 100% 100% no-repeat;
+  --bg-card: rgba(255, 255, 255, 0.45);
+  --bg-input: rgba(255, 255, 255, 0.6);
+  --text-main: #1e293b;
+  --text-muted: #475569;
+  --text-link: #3b82f6;
+  --border-dim: rgba(255, 255, 255, 0.7);
+  --border-focus: rgba(255, 255, 255, 0.9);
+  --nav-bg: rgba(255, 255, 255, 0.5);
+  --accent: #ec4899;
+  --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-md: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 [data-theme='dark'] {
-  /* Ultra Dark Theme */
-  --bg-app: #000000;
-  --bg-card: #050505;
-  --bg-input: #121212;
-  --text-main: #f5f5f5;
-  --text-muted: #737373;
-  --text-link: #0095f6;
-  --border-dim: #262626;
-  --border-focus: #404040;
-  --nav-bg: rgba(0, 0, 0, 0.8);
-  --accent: #ff3040;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.7);
+  /* Immersive Colorful Dark Theme (Cyberpunk/Twilight vibe) */
+  --bg-app: 
+    radial-gradient(circle at 15% 25%, rgba(147, 197, 253, 0.4) 0%, transparent 8%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle at 85% 75%, rgba(253, 164, 175, 0.4) 0%, transparent 8%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 20% 0%, rgba(30, 58, 138, 0.6) 0%, transparent 40%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 80% 10%, rgba(30, 64, 175, 0.4) 0%, transparent 50%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 10% 90%, rgba(159, 18, 57, 0.5) 0%, transparent 40%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(ellipse at 90% 100%, rgba(225, 29, 72, 0.6) 0%, transparent 50%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle, rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px) 0 0 / 25px 25px repeat,
+    linear-gradient(180deg, #020617 0%, #1e1b4b 40%, #701a22 80%, #4c0519 100%) 0 0 / 100% 100% no-repeat;
+  --bg-card: rgba(15, 23, 42, 0.4);
+  --bg-input: rgba(30, 41, 59, 0.5);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-link: #60a5fa;
+  --border-dim: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(255, 255, 255, 0.25);
+  --nav-bg: rgba(0, 0, 0, 0.5);
+  --accent: #f43f5e;
+  --shadow-sm: 0 4px 6px rgba(0,0,0,0.3);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* Glassmorphism Overrides */
+.post-card, .sidebar, .search-panel, .auth-card, .top-navbar {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateZ(0);
 }
 
 * {
   box-sizing: border-box;
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.1s ease;
+  transition: border-color 0.3s ease, color 0.1s ease;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--bg-app);
   color: var(--text-main);
+  background-color: var(--bg-app); /* Fallback */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Offload heavy background rendering to a fixed GPU layer to fix scrolling lag */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background: var(--bg-app);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 a {

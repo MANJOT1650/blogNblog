@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +51,10 @@ public class ChatController {
 
     @PostMapping("/api/messages/{id}/status")
     @ResponseBody
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @Payload Map<String, String> payload, Principal principal) {
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> payload, Principal principal) {
         String statusStr = payload.get("status");
         MessageStatus status = MessageStatus.valueOf(statusStr);
-        // Add logic in service to update status if needed
+        messageService.updateMessageStatus(id, status);
         return ResponseEntity.ok().build();
     }
 }
