@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -38,7 +40,8 @@ public class PostController {
     @Autowired
     private FollowRepository followRepo;
 
-    private final String uploadDir = "uploads/";
+    @Value("${upload.dir:uploads/}")
+    private String uploadDir;
 
     @GetMapping
     public List<Map<String, Object>> getAll(

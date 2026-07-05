@@ -14,7 +14,7 @@ const Settings = ({ user, setUser }) => {
         confirmPassword: ''
     });
     const [profilePic, setProfilePic] = useState(null);
-    const [preview, setPreview] = useState(user?.profilePicture ? `http://localhost:8080${user.profilePicture}` : null);
+    const [preview, setPreview] = useState(user?.profilePicture ? `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${user.profilePicture}` : null);
     const [message, setMessage] = useState({ type: '', text: '' });
     const [loading, setLoading] = useState(false);
 
@@ -49,7 +49,7 @@ const Settings = ({ user, setUser }) => {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.post('http://localhost:8080/api/users/me', data, {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/me`, data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'

@@ -16,7 +16,7 @@ const Chat = () => {
     const fetchFollowing = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:8080/api/users/me/following', {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/me/following`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setFollowing(res.data);
@@ -28,7 +28,7 @@ const Chat = () => {
     const fetchHistory = useCallback(async (user) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:8080/api/messages/${user}`, {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/messages/${user}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessages(res.data);
@@ -106,7 +106,7 @@ const Chat = () => {
                         >
                             <div className="avatar small">
                                 {u.profilePicture ? (
-                                    <img src={`http://localhost:8080${u.profilePicture}`} alt={u.username} />
+                                    <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${u.profilePicture}`} alt={u.username} />
                                 ) : (
                                     <User size={16} />
                                 )}

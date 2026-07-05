@@ -21,10 +21,10 @@ const Profile = ({ user: currentUser }) => {
         try {
             const token = localStorage.getItem('token');
             const [profileRes, postsRes] = await Promise.all([
-                axios.get(`http://localhost:8080/api/users/${username}`, {
+                axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/${username}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get(`http://localhost:8080/api/posts?username=${username}`, {
+                axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/posts?username=${username}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
             ]);
@@ -44,10 +44,10 @@ const Profile = ({ user: currentUser }) => {
     const fetchTabData = useCallback(async () => {
         const token = localStorage.getItem('token');
         let url = '';
-        if (activeTab === 'POSTS') url = `http://localhost:8080/api/posts?username=${username}`;
-        else if (activeTab === 'SAVED') url = `http://localhost:8080/api/users/${username}/saved`;
-        else if (activeTab === 'LIKED') url = `http://localhost:8080/api/users/${username}/liked`;
-        else if (activeTab === 'COMMENTED') url = `http://localhost:8080/api/users/${username}/commented`;
+        if (activeTab === 'POSTS') url = `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/posts?username=${username}`;
+        else if (activeTab === 'SAVED') url = `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/${username}/saved`;
+        else if (activeTab === 'LIKED') url = `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/${username}/liked`;
+        else if (activeTab === 'COMMENTED') url = `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/${username}/commented`;
 
         try {
             const res = await axios.get(url, {
@@ -75,7 +75,7 @@ const Profile = ({ user: currentUser }) => {
         try {
             const token = localStorage.getItem('token');
             const endpoint = isFollowing ? 'unfollow' : 'follow';
-            await axios.post(`http://localhost:8080/api/users/${username}/${endpoint}`, {}, {
+            await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/${username}/${endpoint}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setIsFollowing(!isFollowing);
@@ -110,7 +110,7 @@ const Profile = ({ user: currentUser }) => {
             <header className="profile-info-section">
                 <div className="profile-pic-container">
                     {profile.profilePicture ? (
-                        <img src={`http://localhost:8080${profile.profilePicture}`} alt={profile.username} />
+                        <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${profile.profilePicture}`} alt={profile.username} />
                     ) : (
                         <div className="profile-pic-placeholder">{profile.username[0].toUpperCase()}</div>
                     )}
@@ -185,7 +185,7 @@ const Profile = ({ user: currentUser }) => {
                     posts.map(post => (
                         <Link to={`/post/${post.id}`} key={post.id} className="grid-post">
                             {post.imageUrl ? (
-                                <img src={`http://localhost:8080${post.imageUrl}`} alt={post.title} />
+                                <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${post.imageUrl}`} alt={post.title} />
                             ) : (
                                 <div className="post-text-placeholder">{post.title}</div>
                             )}

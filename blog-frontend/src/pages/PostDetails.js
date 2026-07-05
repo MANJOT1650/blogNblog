@@ -133,7 +133,7 @@ const PostDetails = ({ user }) => {
       </div>
 
       <div className="post-content">
-        {post.imageUrl && <img src={`http://localhost:8080${post.imageUrl}`} alt={post.title} className="main-image" />}
+        {post.imageUrl && <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${post.imageUrl}`} alt={post.title} className="main-image" />}
         <p>{post.content}</p>
       </div>
 

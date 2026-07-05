@@ -31,7 +31,7 @@ const Sidebar = ({ user, onLogout, theme, toggleTheme }) => {
   const fetchSearchResults = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:8080/api/users/search?q=${searchQuery}`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/search?q=${searchQuery}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSearchResults(res.data);
@@ -140,7 +140,7 @@ const Sidebar = ({ user, onLogout, theme, toggleTheme }) => {
               >
                 <div className="result-avatar">
                   {result.profilePicture ? (
-                    <img src={`http://localhost:8080${result.profilePicture}`} alt="" />
+                    <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${result.profilePicture}`} alt="" />
                   ) : (
                     result.username[0].toUpperCase()
                   )}

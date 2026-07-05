@@ -25,7 +25,7 @@ const Home = ({ user }) => {
   const fetchSuggestions = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:8080/api/users/me/following', {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/me/following`, {
           headers: { Authorization: `Bearer ${token}` }
       });
       setSuggestions(res.data.slice(0, 5));
@@ -58,7 +58,7 @@ const Home = ({ user }) => {
   const handleFollow = async (username) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`http://localhost:8080/api/users/${username}/follow`, {}, {
+      await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/users/${username}/follow`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchSuggestions();
@@ -79,7 +79,7 @@ const Home = ({ user }) => {
                 <Link to={`/${post.author}`} className="post-author-info">
                   <div className="author-avatar">
                     {post.userProfilePic ? (
-                      <img src={`http://localhost:8080${post.userProfilePic}`} alt={post.author} />
+                      <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${post.userProfilePic}`} alt={post.author} />
                     ) : (
                       post.author[0].toUpperCase()
                     )}
@@ -93,7 +93,7 @@ const Home = ({ user }) => {
 
               <div className="post-image">
                 {post.imageUrl ? (
-                  <img src={`http://localhost:8080${post.imageUrl}`} alt={post.title} />
+                  <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${post.imageUrl}`} alt={post.title} />
                 ) : (
                   <div className="no-image-placeholder">
                     <h3>{post.title}</h3>
@@ -169,7 +169,7 @@ const Home = ({ user }) => {
                <Link to={`/${sug.username}`} className="suggestion-user">
                  <div className="suggestion-avatar">
                    {sug.profilePicture ? (
-                     <img src={`http://localhost:8080${sug.profilePicture}`} alt={sug.username} />
+                     <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}${sug.profilePicture}`} alt={sug.username} />
                    ) : (
                      sug.username[0].toUpperCase()
                    )}
