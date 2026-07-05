@@ -1,16 +1,12 @@
 services:
   - type: web
     name: blognblog-backend
-    env: java
+    env: docker
     rootDir: demo
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/demo-0.0.1-SNAPSHOT.jar
     plan: free
     envVars:
       - key: PORT
         value: 8080
-      - key: JAVA_VERSION
-        value: 21
       - key: DB_URL
         sync: false
       - key: DB_USER
